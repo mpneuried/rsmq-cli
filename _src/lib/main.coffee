@@ -1,37 +1,16 @@
-# # RsmqCli
+cli = require( "./_global_opt" )( false )
 
-# ### extends [NPM:MPBasic](https://cdn.rawgit.com/mpneuried/mpbaisc/master/_docs/index.coffee.html)
-
-#
-# ### Exports: *Class*
-#
-# Main Module
-# 
-
-class RsmqCli extends require( "mpbasic" )()
-
-	# ## defaults
-	defaults: =>
-		@extend super, 
-			# **RsmqCli.foo** *Number* This is a example default option
-			foo: 23
-			# **RsmqCli.bar** *String* This is a example default option
-			bar: "Buzz"
-
-	###	
-	## constructor 
+cli
+	.command('send <msgs...> [options]', 'send a message')
+	.command('create [options]', 'create a queue')
+	.command('receive [options]', 'receive a single message')
+	.command('delete <ids...> [msgid]', 'delete a single message')
+	.command('stats [options]', 'get queue stats')
+	.command('count [options]', 'get number of messages in the queue')
+	.command('ls [options]', 'get queue stats')
+	.command('visibility [options] <id> <vt>', 'change the visibility of a messages')
+	.command('attributes [options] <name> <value>', 'change queue attributes')
+	.parse(process.argv)
 	###
-	constructor: ( options )->
-		super
-		
-
-		@start()
-
-		return
-
-	start: =>
-		@debug "START"
-		return
-
-#export this class
-module.exports = RsmqCli
+	.command('config [type] [name] [value]', 'change the global attributes')
+	###

@@ -94,7 +94,7 @@ List all queues within the namespace
 
 #### `visibility` *short:* `vs`
 
-chane the visibility of a message
+change the visibility of a message
 
 ```sh
   rsmq visibility [msgid] [vt] [global-options]

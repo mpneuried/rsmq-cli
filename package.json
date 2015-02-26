@@ -28,7 +28,7 @@
     "rsmq": "0.3.x"
   },
   "bin": {
-    "rsmq": "./bin/cli.js"
+    "rsmq": "./bin/rsmq.js"
   },
   "devDependencies": {
     "should": "4.3.x",
