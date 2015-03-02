@@ -7,7 +7,7 @@ cli
 	.option("-p, --port <n>", "Redis port", 6379)
 	.option("-n, --ns <value>", "RSMQ namespace", "rsmq")
 	.option("-q, --qname <n>", "RSMQ queuename")
-	.option("-g, --group [value]", "Client config group")
+	.option("--profile [value]", "Client config profile")
 
 commands = [
 	command: 'create'

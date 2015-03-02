@@ -36,7 +36,7 @@ Execpt the option `--group` tt's also possible to define your own default by usi
 - **-p --port** : *( `Numner` optional: default = `6379` )* Redis port
 - **-n --ns** : *( `String` optional: default = `rsmq` )* RSMQ namespace
 - **-q --qname** : *( `String` optional )* RSMQ queuename.
-- **--group** : *( `String` optional )* RSMQ client configuration group.
+- **--profile** : *( `String` optional )* RSMQ client configuration profile.
 
 ## Commands
 
