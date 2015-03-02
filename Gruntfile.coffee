@@ -38,7 +38,7 @@ module.exports = (grunt) ->
 					suffix: ''
 
 				files:
-					"lib/global_opt.js": ["lib/global_opt.js"]
+					"lib/main.js": ["lib/main.js"]
 
 		
 		mochacli:
@@ -52,8 +52,8 @@ module.exports = (grunt) ->
 			main:
 				src: [ "test/main.js" ]
 				options:
-					env: 
-						severity_heartbeat: "debug"
+					env: {}
+						#global: true
 		
 		
 		docker:

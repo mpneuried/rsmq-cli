@@ -7,6 +7,9 @@
 #
 # Main Module
 # 
+async = require( "async" )
+_ = require( "lodash" )
+
 RSMQueue = require( "rsmq" )
 
 #export this class
@@ -64,8 +67,17 @@ class RSMQCli extends require( "mpbasic" )()
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
 
+		afns = []
 		for msg in messages
-			@_sendSingle( msg )( cb )
+			afns.push @_sendSingle( msg )
+
+		async.parallel afns, ( err, result )=>
+			if err
+				cb( err )
+				return
+
+			cb( null, result.join( "\n" ) )
+			return
 		return
 
 	_sendSingle: ( msg )=>
@@ -162,8 +174,17 @@ class RSMQCli extends require( "mpbasic" )()
 		if not ids?.length
 			@_handleError( cb, "EINVALIDMSGIDS" )
 
+		afns = []
 		for id in ids
-			@_deleteSingle( id )( cb )
+			afns.push @_deleteSingle( id )
+
+		async.parallel afns, ( err, result )=>
+			if err
+				cb( err )
+				return
+
+			cb( null, result.join( "\n" ) )
+			return
 		return
 
 	_deleteSingle: ( id )=>
@@ -187,6 +208,17 @@ class RSMQCli extends require( "mpbasic" )()
 				return
 			cb( null, JSON.stringify( message ) )
 			return
+		return
+
+	final: ( err, results )=>
+		if err
+			process.stderr.write( err.name + " : " + err.message )
+		else if _.isString( results )
+			process.stdout.write( results )
+		else
+			process.stdout.write( results.toString() )
+		#process.stdout.write( "\n" )
+		@quit()
 		return
 
 	quit: =>

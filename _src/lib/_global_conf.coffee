@@ -6,7 +6,6 @@ pathToGlobalConf = "#{_home}/.rsmq"
 try
 	_config = fs.readFileSync( pathToGlobalConf )
 catch err
-	console.log err
 	if err.message.indexOf( "ENOENT" ) is 0
 		console.log "DEBUG - create global config"
 		# create config file
