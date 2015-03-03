@@ -3,6 +3,8 @@ node_js:
   - 0.10
   - 0.12
   - iojs
+ services:
+  - redis-server
 before_script:
   - "npm install -g mocha grunt-cli"
   - "grunt build"
