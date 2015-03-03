@@ -64,7 +64,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		# Implement tests cases here
 		it "create queue", ( done )->
 			call "create", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				should.exist( result )
 				result.should.equal( "1" )
 				done()
@@ -81,7 +81,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "send one message", ( done )->
 			call "send", { "q": qname }, "abc", ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				ids = result.split( "\n" )
 				ids.should.have.length( 1 )
 				_ids.push( ids[0] )
@@ -107,7 +107,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "send multiple messages", ( done )->
 			call "sn", { "q": qname }, "xyz1","xyz2","xyz3", ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				ids = result.split( "\n" )
 				ids.should.have.length( 3 )
 				_ids = _ids.concat( ids )
@@ -117,7 +117,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "receive a messages", ( done )->
 			call "receive", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.rc.should.eql( 1 )
 				_data.message.should.eql( "abc" )
@@ -127,7 +127,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "receive another messages", ( done )->
 			call "rc", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.rc.should.eql( 1 )
 				_data.message.should.eql( "xyz1" )
@@ -137,7 +137,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get queue count", ( done )->
 			call "count", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				should.exist( result )
 				result.should.equal( "4" )
 				done()
@@ -146,7 +146,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "delete a message", ( done )->
 			call "delete", _ids[0],{ "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				ids = result.split( "\n" )
 				ids.should.have.length( 1 )
 				ids[0].should.eql( "1" )
@@ -156,7 +156,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get queue count", ( done )->
 			call "count", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				should.exist( result )
 				result.should.equal( "3" )
 				done()
@@ -165,7 +165,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "delete multiple messages", ( done )->
 			call "rm", _ids[1], _ids[2],{ "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				ids = result.split( "\n" )
 				ids.should.have.length( 2 )
 				ids[0].should.eql( "1" )
@@ -176,7 +176,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get queue count", ( done )->
 			call "count", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				should.exist( result )
 				result.should.equal( "1" )
 				done()
@@ -185,7 +185,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get the queue stats", ( done )->
 			call "stats", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.msgs.should.equal( 1 )
 				_data.hiddenmsgs.should.equal( 0 )
@@ -197,7 +197,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "set queue attribute `vt`", ( done )->
 			call "attributes", "vt", 120, { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.msgs.should.equal( 1 )
@@ -210,7 +210,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get the queue stats", ( done )->
 			call "stats", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.msgs.should.equal( 1 )
@@ -223,7 +223,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "set queue attribute `delay`", ( done )->
 			call "attributes", "delay", 5, { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.delay.should.equal( 5 )
@@ -237,7 +237,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "set queue attribute `maxsize`", ( done )->
 			call "attributes", "maxsize", 1024, { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.delay.should.equal( 5 )
@@ -252,7 +252,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get the queue stats again", ( done )->
 			call "stats", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.delay.should.equal( 5 )
@@ -267,7 +267,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "list queues", ( done )->
 			call "ls", ( err, queues )->
-				should.not.exist( err )
+				throw err if err
 				_data = queues.split( "\n" )
 				if qname not in _data
 					throw "missing queuename"
@@ -277,7 +277,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "change a message visibility", ( done )->
 			call "vs", _ids[3], 3, { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				result.should.eql("1")
 				done()
 				return
@@ -292,7 +292,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get the queue stats to check hidden msg", ( done )->
 			call "stats", { "q": qname }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.delay.should.equal( 5 )
@@ -309,7 +309,7 @@ describe "----- rsmq-cli TESTS -----", ->
 			@timeout(5000)
 			setTimeout( ->
 				call "rc", { "q": qname }, ( err, result )->
-					should.not.exist( err )
+					throw err if err
 					_data = JSON.parse( result )
 					_data.rc.should.eql( 1 )
 					_data.message.should.eql( "xyz3" )
@@ -322,9 +322,13 @@ describe "----- rsmq-cli TESTS -----", ->
 
 	describe 'Config Tests', ->
 		_conf = null
+
+		_group = utils.randomString( 10, 0 )
+		_ns = utils.randomString( 5, 0 )
+
 		it "get the current config", ( done )->
 			call "config", "ls", ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				result.should.containEql( "port:" )
 				result.should.containEql( "host:" )
 				result.should.containEql( "ns:" )
@@ -335,7 +339,7 @@ describe "----- rsmq-cli TESTS -----", ->
 
 		it "get the current config as json", ( done )->
 			call "config", "ls", { "json": null }, ( err, result )->
-				should.not.exist( err )
+				throw err if err
 				_conf = JSON.parse( result )					
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
@@ -345,5 +349,120 @@ describe "----- rsmq-cli TESTS -----", ->
 				return
 			return
 
+		it "get another config group as json", ( done )->
+			call "config", "ls", { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )				
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				should.not.exist( _conf.qname )
+				_conf.timeout.should.be.type('number')
+				done()
+				return
+			return
+
+		it "try to get the size of a not existing queue of group", ( done )->
+			call "count", { "g": _group }, ( err, result )->
+				should.exist( err )
+				err.should.containEql( "EMISSINGQNAME" )
+				done()
+				return
+			return
+
+		it "set the ns for the current config", ( done )->
+			call "config", "set", "ns", _ns, { "json": null, g: _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )					
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.ns.should.equal( _ns )
+				_conf.timeout.should.be.type('number')
+				done()
+				return
+			return
+
+		it "create a new queue", ( done )->
+			call "create", { "q": qname, "g": _group }, ( err, result )->
+				throw err if err
+				should.exist( result )
+				result.should.equal( "1" )
+				done()
+				return
+			return
+
+		it "set the qname for the  current config", ( done )->
+			call "config", "set", "qname", qname, { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )					
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.qname.should.be.type('string')
+				_conf.qname.should.equal( qname )
+				_conf.timeout.should.be.type('number')
+				done()
+				return
+			return
+
+		it "get the queue count of group without defineing the qname", ( done )->
+			call "count", { "g": _group }, ( err, result )->
+				throw err if err
+				should.exist( result )
+				result.should.equal( "0" )
+				done()
+				return
+			return
+
+		it "set the global qname", ( done )->
+			call "config", "set", "qname", qname, { "json": null }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )					
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.qname.should.be.type('string')
+				_conf.qname.should.equal( qname )
+				_conf.timeout.should.be.type('number')
+				done()
+				return
+			return
+
+		
+		it "get the queue count without the qname", ( done )->
+			call "count", ( err, result )->
+				throw err if err
+				should.exist( result )
+				result.should.equal( "1" )
+				done()
+				return
+			return
+
+		it "reset global qname", ( done )->
+			call "config", "set", "qname", { "json": null }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )					
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.timeout.should.be.type('number')
+				should.not.exist( _conf.qname )
+				done()
+				return
+			return
+
+		it "reset global ns", ( done )->
+			call "config", "set", "ns", { "json": null }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )					
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.timeout.should.be.type('number')
+				_conf.ns.should.be.type('string')
+				_conf.ns.should.equal( "rsmq" )
+				done()
+				return
+			return
 		return
 	return

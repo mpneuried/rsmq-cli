@@ -105,6 +105,7 @@ commands = [
 				_s.push _k + ": " + _v
 			return _s.join( "\n" )
 		_group = options.group or options.parent.group
+
 		if type is "set"
 			cnf.setConfig _n, _v, _group, ( err, cnf )->
 				if err

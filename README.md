@@ -9,12 +9,6 @@ A RSMQ terminal client.
 
 [![NPM](https://nodei.co/npm/rsmq-cli.png?downloads=true&stars=true)](https://nodei.co/npm/rsmq-cli/)
 
-# Under Develpoment
-
-**This module is currently in an early development status. So do not use it in production!**
-
-status: **API/Interface concept**
-
 ## Install
 
 ```

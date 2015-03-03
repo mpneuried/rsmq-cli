@@ -6,3 +6,4 @@ node_js:
 before_script:
   - "npm install -g mocha grunt-cli"
   - "grunt build"
+  - "npm install -g ."

@@ -1,6 +1,6 @@
 {
   "name": "rsmq-cli",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A RSMQ terminal client",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/rsmq-cli",

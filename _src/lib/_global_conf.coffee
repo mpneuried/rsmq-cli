@@ -72,8 +72,8 @@ timeout=#{_defaults.timeout}
 	read: ( scope = "default" )=>
 		if scope is "default"
 			return @cnf[ scope ]
-
-		return _.extend( {}, @read(), @cnf[ scope ] )
+		_def = @read()
+		return _.extend( {}, _.pick( _def, Object.keys( _defaults ) ), @cnf[ scope ] )
 
 	getConfig: ( _n, scope = "default", cb )=>
 		if _n not in _names

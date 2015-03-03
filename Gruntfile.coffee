@@ -53,8 +53,8 @@ module.exports = (grunt) ->
 				src: [ "test/main.js" ]
 				options:
 					env: 
-						{}
-						#global: true
+						#{}
+						global: true
 		
 		
 		docker:

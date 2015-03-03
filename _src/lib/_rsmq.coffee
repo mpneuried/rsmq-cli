@@ -37,9 +37,7 @@ class RSMQCli extends require( "mpbasic" )()
 	## constructor 
 	###
 	constructor: ( options )->
-
 		_cnf = cnf.read( options.group )
-
 		super( _.extend( {}, _cnf, options ) )
 		@ready = false
 
@@ -110,7 +108,13 @@ class RSMQCli extends require( "mpbasic" )()
 			delay: @config.delay or 0
 			maxsize: @config.maxsize or 65536
 
-		@rsmq.createQueue( _args, cb )
+		@rsmq.createQueue _args, ( err, result )=>
+			if err
+				process.stdout.write( JSON.stringify( _args, 1, 2 ) )
+				cb( err )
+				return
+			cb( null, result )
+			return
 		return
 
 	_listqueues: ( cb )=>
@@ -223,21 +227,6 @@ class RSMQCli extends require( "mpbasic" )()
 				return
 			cb( null, JSON.stringify( message ) )
 			return
-		return
-
-	final: ( err, results )=>
-		if err
-			process.stderr.write( err.name + " : " + err.message )
-		else if _.isObject( results )
-			process.stdout.write( JSON.stringify( results, 1, 2 ) )
-		else if _.isString( results )
-			process.stdout.write( results )
-		else if not results?
-			process.stdout.write( "OK" )
-		else
-			process.stdout.write( results.toString() )
-		#process.stdout.write( "\n" )
-		@quit()
 		return
 
 	quit: =>
