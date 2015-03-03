@@ -1,5 +1,4 @@
-rsmq-cli
-============
+![rsmq-cli](https://cloud.githubusercontent.com/assets/300631/6473205/3a4ebe86-c1f8-11e4-941b-232520278dda.png)
 
 [![Build Status](https://secure.travis-ci.org/mpneuried/rsmq-cli.png?branch=master)](http://travis-ci.org/mpneuried/rsmq-cli)
 [![Build Status](https://david-dm.org/mpneuried/rsmq-cli.png)](https://david-dm.org/mpneuried/rsmq-cli)
