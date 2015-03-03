@@ -89,6 +89,22 @@ describe "----- rsmq-cli TESTS -----", ->
 				return
 			return
 
+		it "send a message to a not existing queue", ( done )->
+			call "send", { "q": qname + "_false" }, "abc", ( err, result )->
+				should.exist( err )
+				err.should.containEql( "queueNotFound" )
+				done()
+				return
+			return
+
+		it "send a message to a wrong namespace", ( done )->
+			call "send", { "q": qname + "_false", ns: "abc" }, "abc", ( err, result )->
+				should.exist( err )
+				err.should.containEql( "queueNotFound" )
+				done()
+				return
+			return
+
 		it "send multiple messages", ( done )->
 			call "sn", { "q": qname }, "xyz1","xyz2","xyz3", ( err, result )->
 				should.not.exist( err )
@@ -172,7 +188,7 @@ describe "----- rsmq-cli TESTS -----", ->
 				should.not.exist( err )
 				_data = JSON.parse( result )
 				_data.msgs.should.equal( 1 )
-				_data.hiddenmsgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
 				_data.totalrecv.should.equal( 2 )
 				_data.totalsent.should.equal( 4 )
 				done()
@@ -185,7 +201,7 @@ describe "----- rsmq-cli TESTS -----", ->
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.msgs.should.equal( 1 )
-				_data.hiddenmsgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
 				_data.totalrecv.should.equal( 2 )
 				_data.totalsent.should.equal( 4 )
 				done()
@@ -198,7 +214,51 @@ describe "----- rsmq-cli TESTS -----", ->
 				_data = JSON.parse( result )
 				_data.vt.should.equal( 120 )
 				_data.msgs.should.equal( 1 )
-				_data.hiddenmsgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
+				_data.totalrecv.should.equal( 2 )
+				_data.totalsent.should.equal( 4 )
+				done()
+				return
+			return
+
+		it "set queue attribute `delay`", ( done )->
+			call "attributes", "delay", 5, { "q": qname }, ( err, result )->
+				should.not.exist( err )
+				_data = JSON.parse( result )
+				_data.vt.should.equal( 120 )
+				_data.delay.should.equal( 5 )
+				_data.msgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
+				_data.totalrecv.should.equal( 2 )
+				_data.totalsent.should.equal( 4 )
+				done()
+				return
+			return
+
+		it "set queue attribute `maxsize`", ( done )->
+			call "attributes", "maxsize", 1024, { "q": qname }, ( err, result )->
+				should.not.exist( err )
+				_data = JSON.parse( result )
+				_data.vt.should.equal( 120 )
+				_data.delay.should.equal( 5 )
+				_data.maxsize.should.equal( 1024 )
+				_data.msgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
+				_data.totalrecv.should.equal( 2 )
+				_data.totalsent.should.equal( 4 )
+				done()
+				return
+			return
+
+		it "get the queue stats again", ( done )->
+			call "stats", { "q": qname }, ( err, result )->
+				should.not.exist( err )
+				_data = JSON.parse( result )
+				_data.vt.should.equal( 120 )
+				_data.delay.should.equal( 5 )
+				_data.maxsize.should.equal( 1024 )
+				_data.msgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 0 )
 				_data.totalrecv.should.equal( 2 )
 				_data.totalsent.should.equal( 4 )
 				done()
@@ -211,6 +271,76 @@ describe "----- rsmq-cli TESTS -----", ->
 				_data = queues.split( "\n" )
 				if qname not in _data
 					throw "missing queuename"
+				done()
+				return
+			return
+
+		it "change a message visibility", ( done )->
+			call "vs", _ids[3], 3, { "q": qname }, ( err, result )->
+				should.not.exist( err )
+				result.should.eql("1")
+				done()
+				return
+			return
+
+		it "try to receive the messages", ( done )->
+			call "rc", { "q": qname }, ( err, result )->
+				result.should.eql("{}")
+				done()
+				return
+			return
+
+		it "get the queue stats to check hidden msg", ( done )->
+			call "stats", { "q": qname }, ( err, result )->
+				should.not.exist( err )
+				_data = JSON.parse( result )
+				_data.vt.should.equal( 120 )
+				_data.delay.should.equal( 5 )
+				_data.maxsize.should.equal( 1024 )
+				_data.msgs.should.equal( 1 )
+				_data.hiddenmsgs.should.equal( 1 )
+				_data.totalrecv.should.equal( 2 )
+				_data.totalsent.should.equal( 4 )
+				done()
+				return
+			return
+
+		it "try to receive the messages after timeout (`vt`)", ( done )->
+			@timeout(5000)
+			setTimeout( ->
+				call "rc", { "q": qname }, ( err, result )->
+					should.not.exist( err )
+					_data = JSON.parse( result )
+					_data.rc.should.eql( 1 )
+					_data.message.should.eql( "xyz3" )
+					done()
+					return
+				return
+			, 3000 )
+			return
+		return
+
+	describe 'Config Tests', ->
+		_conf = null
+		it "get the current config", ( done )->
+			call "config", "ls", ( err, result )->
+				should.not.exist( err )
+				result.should.containEql( "port:" )
+				result.should.containEql( "host:" )
+				result.should.containEql( "ns:" )
+				result.should.containEql( "timeout:" )
+				done()
+				return
+			return
+
+		it "get the current config as json", ( done )->
+			call "config", "ls", { "json": null }, ( err, result )->
+				should.not.exist( err )
+				console.log result
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.timeout.should.be.type('number')
 				done()
 				return
 			return

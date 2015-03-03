@@ -29,6 +29,8 @@ class RSMQCli extends require( "mpbasic" )()
 			ns: "rsmq"
 			# **RSMQCli.qname** *String* RSMQ namespace
 			qname: null
+			# **RSMQCli.timeout** *Number* timeout to wait for a redis connection
+			timeout: 3000
 
 	###	
 	## constructor 
@@ -53,6 +55,7 @@ class RSMQCli extends require( "mpbasic" )()
 
 		@ready = @rsmq.connected
 		@rsmq.on "connect", =>
+			clearTimeout( @wait4Connection ) if @wait4Connection?
 			@ready = true
 			@emit( "ready" )
 			return
@@ -61,6 +64,14 @@ class RSMQCli extends require( "mpbasic" )()
 			@ready = false
 			@emit( "disconnect" )
 			return
+
+		if not @ready
+			@wait4Connection = setTimeout( =>
+				@final( @_handleError( true, "ECONNECTIONTIMEOUT" ) )
+				process.exit( 1 )
+				return
+			, @config.timeout )
+
 		return
 
 	_send: ( messages, cb )=>
@@ -213,8 +224,12 @@ class RSMQCli extends require( "mpbasic" )()
 	final: ( err, results )=>
 		if err
 			process.stderr.write( err.name + " : " + err.message )
+		else if _.isObject( results )
+			process.stdout.write( JSON.stringify( results, 1, 2 ) )
 		else if _.isString( results )
 			process.stdout.write( results )
+		else if not results?
+			process.stdout.write( "OK" )
 		else
 			process.stdout.write( results.toString() )
 		#process.stdout.write( "\n" )
@@ -222,11 +237,13 @@ class RSMQCli extends require( "mpbasic" )()
 		return
 
 	quit: =>
+		clearTimeout( @wait4Connection ) if @wait4Connection?
 		@rsmq.redis.quit()
 		return
 
 	ERRORS: =>
 		return @extend super,
+			"ECONNECTIONTIMEOUT": [ 400, "Cannot connect to redis" ]
 			"EMISSINGQNAME": [ 400, "missing --qname` or `-q` argument" ]
 			"EINVALIDMSGID": [ 400, "invalid message id. Please define a message id" ]
 			"EINVALIDMSGIDS": [ 400, "invalid message id's. Please define at least one message id" ]
