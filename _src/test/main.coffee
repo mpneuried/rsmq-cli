@@ -336,7 +336,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "get the current config as json", ( done )->
 			call "config", "ls", { "json": null }, ( err, result )->
 				should.not.exist( err )
-				console.log result
+				_conf = JSON.parse( result )					
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')

@@ -9,6 +9,7 @@
 # 
 async = require( "async" )
 _ = require( "lodash" )
+cnf = require( "./_global_conf" )
 
 RSMQueue = require( "rsmq" )
 
@@ -36,7 +37,10 @@ class RSMQCli extends require( "mpbasic" )()
 	## constructor 
 	###
 	constructor: ( options )->
-		super
+
+		_cnf = cnf.read( options.group )
+
+		super( _.extend( {}, _cnf, options ) )
 		@ready = false
 
 		@send = @_waitUntil( @_send )

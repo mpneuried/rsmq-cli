@@ -4,14 +4,15 @@ RSMQ = require( "./_rsmq" )
 
 cnf = require( "./_global_conf" )
 _default = cnf.read()
+
 cli
 	.version("@@version")
-	.option("-h, --host <value>", "Redis host", _default.host or "127.0.0.1")
-	.option("-p, --port <n>", "Redis port", _default.port or 6379)
-	.option("-n, --ns <value>", "RSMQ namespace", _default.ns or "rsmq")
-	.option("-t, --timeout <n>", "Timeout to wait for a redis connection", _default.timeout or 2000 )
-	.option("-q, --qname <n>", "RSMQ queuename", _default.qname )
-	.option("--profile [value]", "Client config profile")
+	.option("-h, --host <value>", "Redis host" )
+	.option("-p, --port <n>", "Redis port" )
+	.option("-n, --ns <value>", "RSMQ namespace" )
+	.option("-t, --timeout <n>", "Timeout to wait for a redis connection" )
+	.option("-q, --qname <n>", "RSMQ queuename" )
+	.option("-g, --group [value]", "Client config profile group")
 
 
 final = ( fnEnd )->
@@ -103,9 +104,9 @@ commands = [
 			for _k, _v of cnf
 				_s.push _k + ": " + _v
 			return _s.join( "\n" )
-		_profile = options.profile or options.parent.profile
+		_group = options.group or options.parent.group
 		if type is "set"
-			cnf.setConfig _n, _v, _profile, ( err, cnf )->
+			cnf.setConfig _n, _v, _group, ( err, cnf )->
 				if err
 					_final( err )
 					return
@@ -117,10 +118,10 @@ commands = [
 				return
 			return
 		if type is "get"
-			cnf.getConfig( _n, _profile, _final )
+			cnf.getConfig( _n, _group, _final )
 			return
 		if type is "ls"
-			cnf = cnf.read( _profile )
+			cnf = cnf.read( _group )
 			if options.json
 				_final( null, JSON.stringify( cnf ) )
 				return
