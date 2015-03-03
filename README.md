@@ -26,10 +26,11 @@ Global options can be used by every command.
 Execpt the option `--group` tt's also possible to define your own default by using `rsmq config` or by editing the file `~/.rsmq-cli`.
 
 - **-h --host** : *( `String` optional: default = `127.0.0.1` )* Redis host
-- **-p --port** : *( `Numner` optional: default = `6379` )* Redis port
+- **-p --port** : *( `Number` optional: default = `6379` )* Redis port
 - **-n --ns** : *( `String` optional: default = `rsmq` )* RSMQ namespace
 - **-q --qname** : *( `String` optional )* RSMQ queuename.
-- **--profile** : *( `String` optional )* RSMQ client configuration profile.
+- **-t --timeout** : *( `Number` optional: default = `6379` )* timeout to wait for a redis connection.
+- **-g --group** : *( `String` optional )* RSMQ configuration group.
 
 ## Commands
 
@@ -54,12 +55,8 @@ send a message to the queue
 receive a single message
 
 ```sh
-  rsmq receive [global-options] [-t]
+  rsmq receive [global-options]
 ```
-
-**Options**
-
-- **-t --timeout** : *( `Number` optional: default = `10` )* RSMQ client idle timeout until the process exits. It set to `0` to use no timeout.
 
 #### `delete` *short:*`rm`
 
@@ -120,29 +117,44 @@ get or set the attributes of a queue
 configurate your client. This makes it possible to redefine the defaults of the client options
 
 ```sh
-  rsmq config [group] ls
+  rsmq config [-g group] ls
 ```
 
 ```sh
-  rsmq config [group] get [name]
+  rsmq config [-g group] get [name]
 ```
 
 ```sh
-  rsmq config [group] set [name] [value]
+  rsmq config [-g group] set [name] [value]
 ```
-
-## Todos
-
- * implement test cases to check for correct template generation.
 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
-|0.0.1|2015-2-23|Initial commit|
+|0.1.1|2015-03-03|first working version|
+|0.0.1|2015-02-23|Initial commit|
 
 [![NPM](https://nodei.co/npm-dl/rsmq-cli.png?months=6)](https://nodei.co/npm/rsmq-cli/)
 
 > Initially Generated with [generator-mpnodemodule](https://github.com/mpneuried/generator-mpnodemodule)
+
+## Other projects
+
+|Name|Description|
+|:--|:--|
+|[**rsmq**](https://github.com/smrchy/rsmq)|A really simple message queue based on Redis|
+|[**rsmq-worker**](https://github.com/mpneuried/rsmq-worker)|a implementatio helper to create a rsmq worker|
+|[**redis-notifications**](https://github.com/mpneuried/redis-notifications)|A redis based notification engine. It implements the rsmq-worker to safely create notifications and recurring reports.|
+|[**node-cache**](https://github.com/tcs-de/nodecache)|Simple and fast NodeJS internal caching. Node internal in memory cache like memcached.|
+|[**redis-sessions**](https://github.com/smrchy/redis-sessions)|An advanced session store for NodeJS and Redis|
+|[**obj-schema**](https://github.com/mpneuried/obj-schema)|Simple module to validate an object by a predefined schema|
+|[**connect-redis-sessions**](https://github.com/mpneuried/connect-redis-sessions)|A connect or express middleware to simply use the [redis sessions](https://github.com/smrchy/redis-sessions). With [redis sessions](https://github.com/smrchy/redis-sessions) you can handle multiple sessions per user_id.|
+|[**systemhealth**](https://github.com/mpneuried/systemhealth)|Node module to run simple custom checks for your machine or it's connections. It will use [redis-heartbeat](https://github.com/mpneuried/redis-heartbeat) to send the current state to redis.|
+|[**task-queue-worker**](https://github.com/smrchy/task-queue-worker)|A powerful tool for background processing of tasks that are run by making standard http requests.|
+|[**soyer**](https://github.com/mpneuried/soyer)|Soyer is small lib for serverside use of Google Closure Templates with node.js.|
+|[**grunt-soy-compile**](https://github.com/mpneuried/grunt-soy-compile)|Compile Goggle Closure Templates ( SOY ) templates inclding the handling of XLIFF language files.|
+|[**backlunr**](https://github.com/mpneuried/backlunr)|A solution to bring Backbone Collections together with the browser fulltext search engine Lunr.js|
+
 
 ## The MIT License (MIT)
 
