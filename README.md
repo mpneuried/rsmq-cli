@@ -131,6 +131,7 @@ configurate your client. This makes it possible to redefine the defaults of the 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.2|2016-05-06|updated dependencies and dev environment|
 |0.1.1|2015-03-03|first working version|
 |0.0.1|2015-02-23|Initial commit|
 

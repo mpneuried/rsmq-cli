@@ -1,10 +1,12 @@
 fs = require("fs")
 ini = require('ini')
-_ = require('lodash')
+
+_isNumber = require( "lodash/isNumber" )
+_pick = require( "lodash/pick" )
 
 _names = [ "port", "host", "ns", "timeout", "qname" ]
 
-_defaults = 
+_defaults =
 	port: 6379
 	host: "127.0.0.1"
 	ns: "rsmq"
@@ -29,14 +31,14 @@ class Config extends require( "mpbasic" )()
 				throw err
 
 		_asNumber = []
-		for _k, _v of _defaults when _.isNumber( _v )
-			_asNumber.push( _k ) 
+		for _k, _v of _defaults when _isNumber( _v )
+			_asNumber.push( _k )
 		_decoded = ini.decode( _content )
 		for _scope, _cnf of _decoded
 			for _k in _asNumber when _cnf[ _k ]?
 				_i = parseInt( _cnf[ _k ], 10 )
 				if not isNaN( _i )
-					_decoded[ _scope ][ _k ] = _i 
+					_decoded[ _scope ][ _k ] = _i
 		return _decoded
 
 	defaultConfig: """
@@ -65,7 +67,7 @@ timeout=#{_defaults.timeout}
 	save: ( cb )=>
 		return @writeConfigFile( ini.encode( @cnf ), cb )
 
-	getPath: =>
+	getPath: ->
 		_home = process.env[ "HOME" ] or process.env[ "HOMEPATH" ] or process.env[ "USERPROFILE" ]
 		return "#{_home}/.rsmq" 
 
@@ -73,7 +75,7 @@ timeout=#{_defaults.timeout}
 		if scope is "default"
 			return @cnf[ scope ]
 		_def = @read()
-		return _.extend( {}, _.pick( _def, Object.keys( _defaults ) ), @cnf[ scope ] )
+		return @extend( {}, _pick( _def, Object.keys( _defaults ) ), @cnf[ scope ] )
 
 	getConfig: ( _n, scope = "default", cb )=>
 		if _n not in _names
@@ -95,11 +97,11 @@ timeout=#{_defaults.timeout}
 
 		if _v?
 			_def = _defaults[ _n ]
-			if _.isNumber( _def )
+			if _isNumber( _def )
 				_iv = parseInt( _v, 10 )
 				if isNaN( _iv )
 					@_handleError( cb, "ENOTNUMBER" )
-					return 
+					return
 				@cnf[ scope ][ _n ] = _iv
 			else
 				@cnf[ scope ][ _n ] = _v

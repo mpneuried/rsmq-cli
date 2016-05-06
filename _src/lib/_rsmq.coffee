@@ -8,7 +8,6 @@
 # Main Module
 # 
 async = require( "async" )
-_ = require( "lodash" )
 cnf = require( "./_global_conf" )
 
 RSMQueue = require( "rsmq" )
@@ -21,7 +20,7 @@ class RSMQCli extends require( "mpbasic" )()
 
 	# ## defaults
 	defaults: =>
-		return @extend super, 
+		return @extend super,
 			# **RSMQCli.port** *Number* Redis port
 			port: 6379
 			# **RSMQCli.host** *String* Redis host
@@ -38,7 +37,7 @@ class RSMQCli extends require( "mpbasic" )()
 	###
 	constructor: ( options )->
 		_cnf = cnf.read( options.group )
-		super( _.extend( {}, _cnf, options ) )
+		super( @extend( {}, _cnf, options ) )
 		@ready = false
 
 		@send = @_waitUntil( @_send )
@@ -84,7 +83,7 @@ class RSMQCli extends require( "mpbasic" )()
 		for msg in messages
 			afns.push @_sendSingle( msg )
 
-		async.parallel afns, ( err, result )=>
+		async.parallel afns, ( err, result )->
 			if err
 				cb( err )
 				return
@@ -102,13 +101,13 @@ class RSMQCli extends require( "mpbasic" )()
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
 
-		_args = 
+		_args =
 			qname: @config.qname
 			vt: @config.vt or 30
 			delay: @config.delay or 0
 			maxsize: @config.maxsize or 65536
 
-		@rsmq.createQueue _args, ( err, result )=>
+		@rsmq.createQueue _args, ( err, result )->
 			if err
 				process.stdout.write( JSON.stringify( _args, 1, 2 ) )
 				cb( err )
@@ -118,7 +117,7 @@ class RSMQCli extends require( "mpbasic" )()
 		return
 
 	_listqueues: ( cb )=>
-		@rsmq.listQueues ( err, queues )=>
+		@rsmq.listQueues ( err, queues )->
 			if err
 				cb( err )
 				return
@@ -136,7 +135,7 @@ class RSMQCli extends require( "mpbasic" )()
 		if not vt? or isNaN( parseInt( vt, 10 ) )
 			@_handleError( cb, "EINVALIDVT" )
 
-		_args = 
+		_args =
 			qname: @config.qname
 			vt: parseInt( vt, 10 )
 			id: msgid
@@ -154,12 +153,12 @@ class RSMQCli extends require( "mpbasic" )()
 		if not _value? or isNaN( parseInt( _value, 10 ) )
 			@_handleError( cb, "EINVALIDVT" )
 
-		_args = 
+		_args =
 			qname: @config.qname
 
 		_args[ _name ] = parseInt( _value, 10 )
 
-		@rsmq.setQueueAttributes _args, ( err, stats )=>
+		@rsmq.setQueueAttributes _args, ( err, stats )->
 			if err
 				cb( err )
 				return
@@ -172,10 +171,10 @@ class RSMQCli extends require( "mpbasic" )()
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
 
-		_args = 
+		_args =
 			qname: @config.qname
 
-		@rsmq.getQueueAttributes _args, ( err, stats )=>
+		@rsmq.getQueueAttributes _args, ( err, stats )->
 			if err
 				cb( err )
 				return
@@ -197,7 +196,7 @@ class RSMQCli extends require( "mpbasic" )()
 		for id in ids
 			afns.push @_deleteSingle( id )
 
-		async.parallel afns, ( err, result )=>
+		async.parallel afns, ( err, result )->
 			if err
 				cb( err )
 				return
@@ -208,7 +207,7 @@ class RSMQCli extends require( "mpbasic" )()
 
 	_deleteSingle: ( id )=>
 		return ( cb )=>
-			_args = 
+			_args =
 				qname: @config.qname
 				id: id
 			
@@ -219,9 +218,9 @@ class RSMQCli extends require( "mpbasic" )()
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
 
-		_args = 
+		_args =
 			qname: @config.qname
-		@rsmq.receiveMessage _args, ( err, message )=>
+		@rsmq.receiveMessage _args, ( err, message )->
 			if err
 				cb( err )
 				return
@@ -246,4 +245,3 @@ class RSMQCli extends require( "mpbasic" )()
 
 module.exports = ( cli )->
 	return new RSMQCli( cli )
-

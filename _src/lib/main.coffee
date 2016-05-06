@@ -1,4 +1,6 @@
-_ = require( "lodash" )
+_isObject = require( "lodash/isObject" )
+_isString = require( "lodash/isString" )
+_isArray = require( "lodash/isArray" )
 cli = require( "commander" )
 RSMQ = require( "./_rsmq" )
 
@@ -19,9 +21,9 @@ final = ( fnEnd )->
 	return ( err, results )->
 		if err
 			process.stderr.write( err.name + " : " + err.message )
-		else if _.isObject( results )
+		else if _isObject( results )
 			process.stdout.write( JSON.stringify( results, 1, 2 ) )
-		else if _.isString( results )
+		else if _isString( results )
 			process.stdout.write( results )
 		else if not results?
 			process.stdout.write( "OK" )
@@ -132,7 +134,7 @@ commands = [
 
 
 for _cmd in commands
-	if _.isArray( _cmd.command )
+	if _isArray( _cmd.command )
 		for _c in _cmd.command
 			_cl = cli
 				.command( _c )

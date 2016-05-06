@@ -1,10 +1,13 @@
 path = require('path')
 exec = require('child_process').exec
 should = require('should')
-_ = require( "lodash" )
+
+_isString = require( "lodash/isString" )
+_isNumber = require( "lodash/isNumber" )
+_isObject = require( "lodash/isObject" )
 
 utils = require( "../lib/utils" )
-Module = require( "../." ) 
+Module = require( "../." )
 
 # define a random queue-name
 qname = utils.randomString( 10, 1 )
@@ -13,9 +16,9 @@ call = ( args..., cb )->
 	cmds = []
 	opts = {}
 	for ag in args
-		if _.isString( ag ) or _.isNumber( ag )
+		if _isString( ag ) or _isNumber( ag )
 			cmds.push ag
-		else if _.isObject( ag )
+		else if _isObject( ag )
 			opts = ag
 
 	if process.env[ "global" ]?
@@ -44,8 +47,7 @@ call = ( args..., cb )->
 
 		cb( null, stdout )
 		return
-	return		
-
+	return
 
 describe "----- rsmq-cli TESTS -----", ->
 
@@ -270,7 +272,7 @@ describe "----- rsmq-cli TESTS -----", ->
 				throw err if err
 				_data = queues.split( "\n" )
 				if qname not in _data
-					throw "missing queuename"
+					throw new Error( "missing queuename" )
 				done()
 				return
 			return
@@ -340,7 +342,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "get the current config as json", ( done )->
 			call "config", "ls", { "json": null }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -352,7 +354,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "get another config group as json", ( done )->
 			call "config", "ls", { "json": null, "g": _group }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )				
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -373,7 +375,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "set the ns for the current config", ( done )->
 			call "config", "set", "ns", _ns, { "json": null, g: _group }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -395,7 +397,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "set the qname for the  current config", ( done )->
 			call "config", "set", "qname", qname, { "json": null, "g": _group }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -418,7 +420,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "set the global qname", ( done )->
 			call "config", "set", "qname", qname, { "json": null }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -442,7 +444,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "reset global qname", ( done )->
 			call "config", "set", "qname", { "json": null }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.ns.should.be.type('string')
@@ -455,7 +457,7 @@ describe "----- rsmq-cli TESTS -----", ->
 		it "reset global ns", ( done )->
 			call "config", "set", "ns", { "json": null }, ( err, result )->
 				throw err if err
-				_conf = JSON.parse( result )					
+				_conf = JSON.parse( result )
 				_conf.port.should.be.type('number')
 				_conf.host.should.be.type('string')
 				_conf.timeout.should.be.type('number')
