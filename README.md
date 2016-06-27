@@ -74,6 +74,14 @@ get the current queue attributes and stats
   rsmq stats [global-options]
 ```
 
+#### `count`
+
+get the message count of a queue
+
+```sh
+  rsmq stats [global-options]
+```
+
 #### `listqueues` *short:* `ls`
 
 List all queues within the namespace
@@ -131,6 +139,7 @@ configurate your client. This makes it possible to redefine the defaults of the 
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.3|2016-06-27|fixed error handling on invalid arguments/params; removed generated code docs|
 |0.1.2|2016-05-06|updated dependencies and dev environment|
 |0.1.1|2015-03-03|first working version|
 |0.0.1|2015-02-23|Initial commit|

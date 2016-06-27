@@ -430,7 +430,6 @@ describe "----- rsmq-cli TESTS -----", ->
 				done()
 				return
 			return
-
 		
 		it "get the queue count without the qname", ( done )->
 			call "count", ( err, result )->
@@ -463,6 +462,16 @@ describe "----- rsmq-cli TESTS -----", ->
 				_conf.timeout.should.be.type('number')
 				_conf.ns.should.be.type('string')
 				_conf.ns.should.equal( "rsmq" )
+				done()
+				return
+			return
+		return
+	
+	describe 'Error Tests', ->
+		it "invalid create call", ( done )->
+			call "create", "abc", ( err, result )->
+				should.exist( err )
+				err.should.startWith( "EMISSINGQNAME" )
 				done()
 				return
 			return

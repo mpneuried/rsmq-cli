@@ -1,6 +1,6 @@
 {
   "name": "rsmq-cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A RSMQ terminal client",
   "keywords": [ "rsmq", "redis", "cli", "terminal", "queue", "tool" ],
   "homepage": "https://github.com/mpneuried/rsmq-cli",
@@ -34,13 +34,12 @@
     "rsmq": "./bin/rsmq.js"
   },
   "devDependencies": {
-    "should": "8.x",
+    "should": "9.x",
     "grunt": "1.0.x",
     "grunt-contrib-watch": "1.x",
     "grunt-contrib-coffee": "1.x",
     "grunt-include-replace": "4.x",
     "grunt-mocha-cli": "2.x",
-    "grunt-docker": "0.0.x",
     "grunt-contrib-clean": "1.0.0"
   }
 }

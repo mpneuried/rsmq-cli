@@ -36,7 +36,10 @@ class RSMQCli extends require( "mpbasic" )()
 	## constructor 
 	###
 	constructor: ( options )->
-		_cnf = cnf.read( options.group )
+		if options?.group?.length
+			_cnf = cnf.read( options.group )
+		else
+			_cnf = cnf.read()
 		super( @extend( {}, _cnf, options ) )
 		@ready = false
 
@@ -78,6 +81,7 @@ class RSMQCli extends require( "mpbasic" )()
 	_send: ( messages, cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
+			return
 
 		afns = []
 		for msg in messages
@@ -100,7 +104,8 @@ class RSMQCli extends require( "mpbasic" )()
 	_create: ( cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
-
+			return
+			
 		_args =
 			qname: @config.qname
 			vt: @config.vt or 30
@@ -128,12 +133,15 @@ class RSMQCli extends require( "mpbasic" )()
 	_visibility: ( msgid, vt, cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
+			return
 
 		if not msgid?.length
 			@_handleError( cb, "EINVALIDMSGID" )
+			return
 
 		if not vt? or isNaN( parseInt( vt, 10 ) )
 			@_handleError( cb, "EINVALIDVT" )
+			return
 
 		_args =
 			qname: @config.qname
@@ -146,12 +154,15 @@ class RSMQCli extends require( "mpbasic" )()
 	_attributes: ( _name, _value, cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
+			return
 
 		if not _name?.length or _name not in _attributeNames
 			@_handleError( cb, "EINVALIDATTRNAME" )
+			return
 
 		if not _value? or isNaN( parseInt( _value, 10 ) )
 			@_handleError( cb, "EINVALIDVT" )
+			return
 
 		_args =
 			qname: @config.qname
@@ -170,6 +181,7 @@ class RSMQCli extends require( "mpbasic" )()
 		[ onlycount ] = args
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
+			return
 
 		_args =
 			qname: @config.qname
@@ -180,17 +192,19 @@ class RSMQCli extends require( "mpbasic" )()
 				return
 			if onlycount
 				cb( null, stats.msgs )
-			else
-				cb( null, JSON.stringify( stats ) )
+				return
+			cb( null, JSON.stringify( stats ) )
 			return
 		return
 
 	_delete: ( ids, cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
-
+			return
+			
 		if not ids?.length
 			@_handleError( cb, "EINVALIDMSGIDS" )
+			return
 
 		afns = []
 		for id in ids
@@ -217,6 +231,7 @@ class RSMQCli extends require( "mpbasic" )()
 	_receive: ( cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
+			return
 
 		_args =
 			qname: @config.qname
@@ -230,7 +245,9 @@ class RSMQCli extends require( "mpbasic" )()
 
 	quit: =>
 		clearTimeout( @wait4Connection ) if @wait4Connection?
-		@rsmq.redis.quit()
+		process.nextTick =>
+			@rsmq.redis.quit()
+			return
 		return
 
 	ERRORS: =>

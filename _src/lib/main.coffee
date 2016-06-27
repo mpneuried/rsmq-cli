@@ -20,7 +20,7 @@ cli
 final = ( fnEnd )->
 	return ( err, results )->
 		if err
-			process.stderr.write( err.name + " : " + err.message )
+			process.stderr.write( err.name + " : " + err.message + "\n" )
 		else if _isObject( results )
 			process.stdout.write( JSON.stringify( results, 1, 2 ) )
 		else if _isString( results )

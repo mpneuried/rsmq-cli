@@ -1,4 +1,9 @@
 module.exports = (grunt) ->
+	
+	_testEnv = {}
+	if process.env.GLOBAL?
+		_testEnv.global = 1
+	
 	# Project configuration.
 	grunt.initConfig
 		pkg: grunt.file.readJSON('package.json')
@@ -6,6 +11,9 @@ module.exports = (grunt) ->
 			module:
 				files: ["_src/**/*.coffee"]
 				tasks: [ "coffee:base" ]
+			test:
+				files: ["_src/**/*.coffee"]
+				tasks: [ "coffee:base", "mochacli:main" ]
 			
 		coffee:
 			base:
@@ -50,13 +58,13 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-contrib-clean"
 	grunt.loadNpmTasks "grunt-mocha-cli"
 	grunt.loadNpmTasks "grunt-include-replace"
-	grunt.loadNpmTasks "grunt-docker"
 
 	# just a hack until this issue has been fixed: https://github.com/yeoman/grunt-regarde/issues/3
 	grunt.option('force', not grunt.option('force'))
 	
 	# ALIAS TASKS
-	grunt.registerTask "w", "watch"
+	grunt.registerTask "w", "watch:module"
+	grunt.registerTask "wt", "watch:test"
 	grunt.registerTask "b", "build"
 	grunt.registerTask "t", "test"
 	grunt.registerTask "default", "build"
@@ -65,4 +73,3 @@ module.exports = (grunt) ->
 
 	# build the project
 	grunt.registerTask "build", [ "clear", "coffee:base", "includereplace" ]
-	grunt.registerTask "build-dev", [ "clear", "coffee:base", "docs", "test" ]
