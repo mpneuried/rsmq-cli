@@ -1,1 +1,0 @@
-var tree={"files":["README.md"],"dirs":{"_src":{"dirs":{"lib":{"files":["_global_conf.coffee","_rsmq.coffee","main.coffee","utils.coffee"]},"test":{"files":["main.coffee"]}}}}};

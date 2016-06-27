@@ -42,24 +42,7 @@ module.exports = (grunt) ->
 			main:
 				src: [ "test/main.js" ]
 				options:
-					env:
-						global: true
-		
-		docker:
-			serverdocs:
-				expand: true
-				src: ["_src/**/*.coffee", "README.md"]
-				dest: "_docs/"
-				options:
-					onlyUpdated: false
-					colourScheme: "autumn"
-					ignoreHidden: false
-					sidebarState: true
-					exclude: false
-					lineNums: true
-					js: []
-					css: []
-					extras: []
+					env: _testEnv
 		
 	# Load npm modules
 	grunt.loadNpmTasks "grunt-contrib-watch"
@@ -77,7 +60,6 @@ module.exports = (grunt) ->
 	grunt.registerTask "b", "build"
 	grunt.registerTask "t", "test"
 	grunt.registerTask "default", "build"
-	grunt.registerTask "docs", "docker"
 	grunt.registerTask "clear", [ "clean:base" ]
 	grunt.registerTask "test", [ "build", "mochacli:main" ]
 
