@@ -31,6 +31,7 @@ Execpt the option `--group` tt's also possible to define your own default by usi
 - **-q --qname** : *( `String` optional )* RSMQ queuename.
 - **-t --timeout** : *( `Number` optional: default = `6379` )* timeout to wait for a redis connection.
 - **-g --group** : *( `String` optional )* RSMQ configuration group.
+- **--clientopt** : *( `String` optional )* Redis client options. Multiple usage possible. E.g. `--clientopt password=secret --clientopt db=3` *(see [node_redis.options](https://github.com/NodeRedis/node_redis#options-object-properties))*.
 
 ## Commands
 
@@ -136,9 +137,31 @@ configurate your client. This makes it possible to redefine the defaults of the 
   rsmq config [-g group] set [name] [value]
 ```
 
+**Examples:**
+
+```
+# set the host global
+rsmq config set host my.redis.server.com
+
+# set the host of group
+rsmq config set --group myenv host my.redis.server.com
+
+# set client connection options of a group
+rsmq config set --group myenv clientopt.password "myRedisSecret!"
+
+# get the host of a group
+rsmq config get --group myenv host
+
+# get the complete configuration of a group as json
+rsmq config ls --group myenv --json
+
+# remove the host config of a group
+rsmq config set --group myenv host
+```
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.0|2016-06-27|Added the possibility to define redis client options by using `--clientopt` or setting it via config `rsmq config set clientopt.db 0`|
 |0.1.3|2016-06-27|fixed error handling on invalid arguments/params; removed generated code docs|
 |0.1.2|2016-05-06|updated dependencies and dev environment|
 |0.1.1|2015-03-03|first working version|

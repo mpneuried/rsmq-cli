@@ -3,6 +3,7 @@ ini = require('ini')
 
 _isNumber = require( "lodash/isNumber" )
 _pick = require( "lodash/pick" )
+_set = require( "lodash/set" )
 
 _names = [ "port", "host", "ns", "timeout", "qname" ]
 
@@ -71,12 +72,20 @@ timeout=#{_defaults.timeout}
 		_home = process.env[ "HOME" ] or process.env[ "HOMEPATH" ] or process.env[ "USERPROFILE" ]
 		return "#{_home}/.rsmq" 
 
-	read: ( scope = "default" )=>
+	read: ( scope = "default", raw=true )=>
 		if scope is "default"
-			return @cnf[ scope ]
+			return @jsonProcess( @cnf[ scope ], raw )
 		_def = @read()
-		return @extend( {}, _pick( _def, Object.keys( _defaults ) ), @cnf[ scope ] )
-
+		return @jsonProcess( @extend( {}, _pick( _def, Object.keys( _defaults ) ), @cnf[ scope ] ), raw )
+	
+	jsonProcess: ( data, raw=true )->
+		if raw
+			return data
+		_ret = {}
+		for _k, _v of data
+			_set( _ret, _k, _v )
+		return _ret
+		
 	getConfig: ( _n, scope = "default", cb )=>
 		if _n not in _names
 			@_handleError( cb, "EINVALIDNAME" )
@@ -89,12 +98,13 @@ timeout=#{_defaults.timeout}
 
 
 	setConfig: ( _n, _v, scope = "default", cb )=>
-		if _n not in _names
+		if _n not in _names and _n.indexOf( "clientopt." ) isnt 0
 			@_handleError( cb, "EINVALIDNAME" )
 			return
+		
 		if not @cnf[ scope ]?
 			@cnf[ scope ] = {}
-
+			
 		if _v?
 			_def = _defaults[ _n ]
 			if _isNumber( _def )
@@ -106,8 +116,10 @@ timeout=#{_defaults.timeout}
 			else
 				@cnf[ scope ][ _n ] = _v
 		else if scope is "default" and _defaults[ _n ]?
+			# reset to default
 			@cnf[ scope ][ _n ] = _defaults[ _n ]
 		else
+			# remove config
 			delete @cnf[ scope ][ _n ]
 
 		@save ( err )=>
@@ -121,7 +133,7 @@ timeout=#{_defaults.timeout}
 
 	ERRORS: =>
 		return @extend super,
-			"EINVALIDNAME": [ 400, "Invalid config type. Only `#{_names.join( "`, `" )}` are allowed. " ]
+			"EINVALIDNAME": [ 400, "Invalid config type. Only `#{_names.join( "`, `" )}` or `clientopt.*` are allowed. " ]
 			"ENOTNUMBER": [ 400, "This configuration has to be a number" ]
 
 module.exports = new Config()

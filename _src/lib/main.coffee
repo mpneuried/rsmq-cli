@@ -7,14 +7,20 @@ RSMQ = require( "./_rsmq" )
 cnf = require( "./_global_conf" )
 _default = cnf.read()
 
+collectCOpts = (val, memo={})->
+	[_k,_v] = val.split("=")
+	memo[ _k ] = _v
+	return memo
+
 cli
 	.version("@@version")
 	.option("-h, --host <value>", "Redis host" )
-	.option("-p, --port <n>", "Redis port" )
+	.option("-p, --port <n>", "Redis port", parseInt )
 	.option("-n, --ns <value>", "RSMQ namespace" )
 	.option("-t, --timeout <n>", "Timeout to wait for a redis connection" )
 	.option("-q, --qname <n>", "RSMQ queuename" )
 	.option("-g, --group [value]", "Client config profile group")
+	.option("--clientopt [value]", "Redis client options", collectCOpts )
 
 
 final = ( fnEnd )->
@@ -101,34 +107,34 @@ commands = [
 	options: [ [ "-j, --json", "Return format as JSON" ] ]
 	action: ( type, _n, _v, options )->
 		_final = final()
-		_asString = ( cnf )->
+		_asString = ( _cnf )->
 			_s = []
-			for _k, _v of cnf
+			for _k, _v of _cnf
 				_s.push _k + ": " + _v
 			return _s.join( "\n" )
 		_group = options.group or options.parent.group
 
 		if type is "set"
-			cnf.setConfig _n, _v, _group, ( err, cnf )->
+			cnf.setConfig _n, _v, _group, ( err, _cnf )->
 				if err
 					_final( err )
 					return
 				if options.json
-					_final( null, JSON.stringify( cnf ) )
+					_final( null, JSON.stringify( cnf.jsonProcess( _cnf, false ) ) )
 					return
 				
-				_final( null, _asString( cnf ) )
+				_final( null, _asString( _cnf ) )
 				return
 			return
 		if type is "get"
 			cnf.getConfig( _n, _group, _final )
 			return
 		if type is "ls"
-			cnf = cnf.read( _group )
+			_cnf = cnf.read( _group, false )
 			if options.json
-				_final( null, JSON.stringify( cnf ) )
+				_final( null, JSON.stringify( _cnf ) )
 				return
-			_final( null, _asString( cnf ) )
+			_final( null, _asString( _cnf ) )
 		return
 ]
 

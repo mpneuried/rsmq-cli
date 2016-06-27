@@ -27,6 +27,8 @@ class RSMQCli extends require( "mpbasic" )()
 			host: "127.0.0.1"
 			# **RSMQCli.ns** *String* RSMQ namespace
 			ns: "rsmq"
+			# **RSMQCli.clientopt** *Object* RSMQ connection options
+			clientopt: {}
 			# **RSMQCli.qname** *String* RSMQ namespace
 			qname: null
 			# **RSMQCli.timeout** *Number* timeout to wait for a redis connection
@@ -37,9 +39,10 @@ class RSMQCli extends require( "mpbasic" )()
 	###
 	constructor: ( options )->
 		if options?.group?.length
-			_cnf = cnf.read( options.group )
+			_cnf = cnf.read( options.group, false )
 		else
-			_cnf = cnf.read()
+			_cnf = cnf.read( null, false )
+		
 		super( @extend( {}, _cnf, options ) )
 		@ready = false
 
@@ -56,6 +59,8 @@ class RSMQCli extends require( "mpbasic" )()
 			port: @config.port
 			host: @config.host
 			ns: @config.ns
+			options: @config.clientopt
+			
 
 		@ready = @rsmq.connected
 		@rsmq.on "connect", =>

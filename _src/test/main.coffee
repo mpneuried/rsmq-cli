@@ -51,20 +51,19 @@ call = ( args..., cb )->
 
 describe "----- rsmq-cli TESTS -----", ->
 
-	before ( done )->
-		# TODO add initialisation Code
-		done()
-		return
-
-	after ( done )->
-		#  TODO teardown
-		done()
-		return
-
 	describe 'Default Tests', ->
 		_ids = []
-		# Implement tests cases here
+		_idsB =[]
 		it "create queue", ( done )->
+			call "create", { "q": qname, "clientopt": "db=1" }, ( err, result )->
+				throw err if err
+				should.exist( result )
+				result.should.equal( "1" )
+				done()
+				return
+			return
+		
+		it "create queue in a differnet db", ( done )->
 			call "create", { "q": qname }, ( err, result )->
 				throw err if err
 				should.exist( result )
@@ -87,6 +86,16 @@ describe "----- rsmq-cli TESTS -----", ->
 				ids = result.split( "\n" )
 				ids.should.have.length( 1 )
 				_ids.push( ids[0] )
+				done()
+				return
+			return
+		
+		it "send one message to a differnet queue", ( done )->
+			call "send", { "q": qname, "clientopt": "db=1" }, "abc", ( err, result )->
+				throw err if err
+				ids = result.split( "\n" )
+				ids.should.have.length( 1 )
+				_idsB.push( ids[0] )
 				done()
 				return
 			return
@@ -145,9 +154,28 @@ describe "----- rsmq-cli TESTS -----", ->
 				done()
 				return
 			return
-
+		
+		it "get queue count of a different db", ( done )->
+			call "count", { "q": qname, "clientopt": "db=1" }, ( err, result )->
+				throw err if err
+				should.exist( result )
+				result.should.equal( "1" )
+				done()
+				return
+			return
+		
 		it "delete a message", ( done )->
 			call "delete", _ids[0],{ "q": qname }, ( err, result )->
+				throw err if err
+				ids = result.split( "\n" )
+				ids.should.have.length( 1 )
+				ids[0].should.eql( "1" )
+				done()
+				return
+			return
+		
+		it "delete a message in a differnet db", ( done )->
+			call "delete", _idsB[0],{ "q": qname, "clientopt": "db=1" }, ( err, result )->
 				throw err if err
 				ids = result.split( "\n" )
 				ids.should.have.length( 1 )
@@ -394,7 +422,7 @@ describe "----- rsmq-cli TESTS -----", ->
 				return
 			return
 
-		it "set the qname for the  current config", ( done )->
+		it "set the qname for the current config", ( done )->
 			call "config", "set", "qname", qname, { "json": null, "g": _group }, ( err, result )->
 				throw err if err
 				_conf = JSON.parse( result )
@@ -404,6 +432,53 @@ describe "----- rsmq-cli TESTS -----", ->
 				_conf.qname.should.be.type('string')
 				_conf.qname.should.equal( qname )
 				_conf.timeout.should.be.type('number')
+				done()
+				return
+			return
+		
+		it "set the client options", ( done )->
+			call "config", "set", "clientopt.abc", "Foo", { "json": null }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.timeout.should.be.type('number')
+				_conf.clientopt.should.be.type('object')
+				_conf.clientopt.abc.should.equal('Foo')
+				done()
+				return
+			return
+		
+		it "set the client options of a group", ( done )->
+			call "config", "set", "clientopt.abc", "Bar", { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.qname.should.be.type('string')
+				_conf.qname.should.equal( qname )
+				_conf.timeout.should.be.type('number')
+				_conf.clientopt.should.be.type('object')
+				_conf.clientopt.abc.should.equal('Bar')
+				done()
+				return
+			return
+		
+		it "set the second client options of a group", ( done )->
+			call "config", "set", "clientopt.xyz", "Buzz", { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.qname.should.be.type('string')
+				_conf.qname.should.equal( qname )
+				_conf.timeout.should.be.type('number')
+				_conf.clientopt.should.be.type('object')
+				_conf.clientopt.abc.should.equal('Bar')
+				_conf.clientopt.xyz.should.equal('Buzz')
 				done()
 				return
 			return
@@ -449,6 +524,46 @@ describe "----- rsmq-cli TESTS -----", ->
 				_conf.ns.should.be.type('string')
 				_conf.timeout.should.be.type('number')
 				should.not.exist( _conf.qname )
+				done()
+				return
+			return
+		
+		it "reset global client option", ( done )->
+			call "config", "set", "clientopt.abc", { "json": null }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				should.not.exist( _conf.clientopt )
+				done()
+				return
+			return
+		
+		it "reset first group client option", ( done )->
+			call "config", "set", "clientopt.abc", { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.timeout.should.be.type('number')
+				_conf.clientopt.should.be.type('object')
+				_conf.clientopt.xyz.should.equal('Buzz')
+				should.not.exist( _conf.clientopt.abc )
+				done()
+				return
+			return
+		
+		it "reset second group client option", ( done )->
+			call "config", "set", "clientopt.xyz", { "json": null, "g": _group }, ( err, result )->
+				throw err if err
+				_conf = JSON.parse( result )
+				_conf.port.should.be.type('number')
+				_conf.host.should.be.type('string')
+				_conf.ns.should.be.type('string')
+				_conf.timeout.should.be.type('number')
+				should.not.exist( _conf.clientopt )
 				done()
 				return
 			return
