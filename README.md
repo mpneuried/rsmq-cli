@@ -61,7 +61,7 @@ receive a single message
 
 #### `delete` *short:*`rm`
 
-send a message from the queue
+delete a message from the queue
 
 ```sh
   rsmq delete [msgid] [global-options]
