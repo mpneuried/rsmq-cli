@@ -1,9 +1,5 @@
 ![rsmq-cli](https://cloud.githubusercontent.com/assets/300631/6473205/3a4ebe86-c1f8-11e4-941b-232520278dda.png)
 
-[![Build Status](https://secure.travis-ci.org/mpneuried/rsmq-cli.png?branch=master)](http://travis-ci.org/mpneuried/rsmq-cli)
-[![Build Status](https://david-dm.org/mpneuried/rsmq-cli.png)](https://david-dm.org/mpneuried/rsmq-cli)
-[![NPM version](https://badge.fury.io/js/rsmq-cli.png)](http://badge.fury.io/js/rsmq-cli)
-
 A RSMQ terminal client.
 
 [![NPM](https://nodei.co/npm/rsmq-cli.png?downloads=true&stars=true)](https://nodei.co/npm/rsmq-cli/)
@@ -35,12 +31,28 @@ Execpt the option `--group` tt's also possible to define your own default by usi
 
 ## Commands
 
-#### `create`
+#### `createqueue`
 
 create a new queue if not exists
 
 ```sh
-  rsmq create [global-options]
+  rsmq createqueue [global-options]
+```
+
+#### `listqueues` *short:* `ls`
+
+List all queues within the namespace
+
+```sh
+  rsmq listqueues [global-options]
+```
+
+#### `deletequeue`
+
+delete a message from the queue
+
+```sh
+  rsmq deletequeue [global-options]
 ```
 
 #### `send` *short:* `sn`
@@ -81,14 +93,6 @@ get the message count of a queue
 
 ```sh
   rsmq stats [global-options]
-```
-
-#### `listqueues` *short:* `ls`
-
-List all queues within the namespace
-
-```sh
-  rsmq listqueues [global-options]
 ```
 
 #### `visibility` *short:* `vs`

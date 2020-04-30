@@ -39,11 +39,25 @@ final = ( fnEnd )->
 			fnEnd()
 		return
 commands = [
-	command: 'create'
+	command: 'createqueue'
 	description: 'create a queue'
 	action: ( options )->
 		rsmq = RSMQ( options.parent )
-		rsmq.create( final( rsmq.quit ) )
+		rsmq.createQueue( final( rsmq.quit ) )
+		return
+,
+	command: 'deletequeue'
+	description: 'delete a queue'
+	action: ( options )->
+		rsmq = RSMQ( options.parent )
+		rsmq.deleteQueue( final( rsmq.quit ) )
+		return
+,
+	command: [ 'listqueues', 'ls' ]
+	description: 'list all existing queues'
+	action: ( options )->
+		rsmq = RSMQ( options.parent )
+		rsmq.listqueues( final( rsmq.quit ) )
 		return
 ,
 	command: [ 'send <msgs...>', 'sn <msgs...>' ]
@@ -79,13 +93,6 @@ commands = [
 	action: ( options )->
 		rsmq = RSMQ( options.parent )
 		rsmq.stats( true, final( rsmq.quit ) )
-		return
-,
-	command: [ 'listqueues', 'ls' ]
-	description: 'list all existing queues'
-	action: ( options )->
-		rsmq = RSMQ( options.parent )
-		rsmq.listqueues( final( rsmq.quit ) )
 		return
 ,
 	command: ['visibility <id> <vt>','vs <id> <vt>']

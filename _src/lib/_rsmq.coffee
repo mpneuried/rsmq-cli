@@ -47,9 +47,10 @@ class RSMQCli extends require( "mpbasic" )()
 		@ready = false
 
 		@send = @_waitUntil( @_send )
-		@create = @_waitUntil( @_create )
 		@receive = @_waitUntil( @_receive )
 		@delete = @_waitUntil( @_delete )
+		@createQueue = @_waitUntil( @_createQueue )
+		@deleteQueue = @_waitUntil( @_deleteQueue )
 		@stats = @_waitUntil( @_stats )
 		@listqueues = @_waitUntil( @_listqueues )
 		@visibility = @_waitUntil( @_visibility )
@@ -106,7 +107,7 @@ class RSMQCli extends require( "mpbasic" )()
 			@rsmq.sendMessage( { qname: @config.qname, message: msg }, cb )
 			return
 
-	_create: ( cb )=>
+	_createQueue: ( cb )=>
 		if not @config.qname?.length
 			@_handleError( cb, "EMISSINGQNAME" )
 			return
@@ -120,6 +121,23 @@ class RSMQCli extends require( "mpbasic" )()
 		@rsmq.createQueue _args, ( err, result )->
 			if err
 				process.stdout.write( JSON.stringify( _args, 1, 2 ) )
+				cb( err )
+				return
+			cb( null, result )
+			return
+		return
+
+	_deleteQueue: ( cb )=>
+		if not @config.qname?.length
+			@_handleError( cb, "EMISSINGQNAME" )
+			return
+			
+		_args =
+			qname: @config.qname
+
+		@rsmq.deleteQueue _args, ( err, result )->
+			if err
+				process.stdout.write( JSON.stringify( _args ) )
 				cb( err )
 				return
 			cb( null, result )
